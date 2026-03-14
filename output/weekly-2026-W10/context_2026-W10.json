@@ -769,29 +769,47 @@
       {
         "theme_id": "devex_infrastructure",
         "title": "Developer Experience Infrastructure Overhaul",
-        "description": "Massive effort to modernize local development tooling, CI/CD pipelines, and developer workflows. Spans database migrations, build systems, testing infrastructure, and development environment setup.",
-        "frequency": 23,
+        "description": "Extensive work needed to modernize local development environment, CI/CD pipelines, and tooling. Developers are experiencing slow feedback loops, flaky tests, and fragmented tooling.",
+        "frequency": 22,
         "severity": 7.5,
-        "composite_score": 172.5,
+        "composite_score": 165.0,
         "sources": [
           "github"
         ],
         "product_areas": [
-          "development_infrastructure",
+          "developer_tooling",
           "ci_cd",
-          "build_system",
-          "testing",
           "local_development"
         ],
         "recommended_actions": [
-          "Prioritize the 'hogli' tooling consolidation to reduce context switching between local and CI environments",
-          "Create a developer experience roadmap document to communicate the vision and progress of these infrastructure improvements to the team"
+          "Prioritize hogli improvements (TTFB, reload time, health checks) as it's the single source of truth for local and CI",
+          "Implement cloud development environments to reduce local setup friction and enable parallel development via worktrees"
+        ]
+      },
+      {
+        "theme_id": "code_quality_modernization",
+        "title": "Code Quality and Modernization Debt",
+        "description": "Technical debt around type checking, linting, formatting, dependency management, and framework upgrades. Inconsistent tooling across languages creating maintenance burden.",
+        "frequency": 11,
+        "severity": 6.0,
+        "composite_score": 66.0,
+        "sources": [
+          "github"
+        ],
+        "product_areas": [
+          "codebase_architecture",
+          "type_safety",
+          "dependency_management"
+        ],
+        "recommended_actions": [
+          "Establish schema reuse between backend and frontend to eliminate type mismatches and reduce duplication",
+          "Complete migration to modern tooling (ty for type checking, TSgo for TS 7) and enforce consistent formatting/linting across all languages"
         ]
       },
       {
         "theme_id": "security_vulnerabilities",
-        "title": "Critical Security Vulnerabilities in Core Code",
-        "description": "Two high-severity security issues identified: unsafe pickle deserialization and shell=True in subprocess calls. Both represent code injection risks that need immediate remediation.",
+        "title": "Security Vulnerabilities in Core Code",
+        "description": "Critical security issues including unsafe deserialization (pickle) and shell command injection (subprocess with shell=True). These represent immediate security risks.",
         "frequency": 3,
         "severity": 9.5,
         "composite_score": 28.5,
@@ -800,18 +818,39 @@
         ],
         "product_areas": [
           "security",
-          "core_backend",
-          "data_processing"
+          "data_processing",
+          "system_commands"
         ],
         "recommended_actions": [
-          "Immediately audit all pickle usage and replace with safe serialization formats (JSON, msgpack) for untrusted data",
-          "Establish automated security scanning in CI to catch shell=True, pickle, and other dangerous patterns before merge"
+          "Immediately audit and replace pickle deserialization with safe alternatives (json, msgpack) to prevent arbitrary code execution",
+          "Replace all subprocess calls using shell=True with parameterized commands and establish automated security scanning in CI"
+        ]
+      },
+      {
+        "theme_id": "product_maturity_signals",
+        "title": "Product Maturity and Polish Issues",
+        "description": "Various signals indicating features still marked as BETA, missing monitoring capabilities, and workflow testing gaps that suggest incomplete productization.",
+        "frequency": 5,
+        "severity": 5.5,
+        "composite_score": 27.5,
+        "sources": [
+          "github"
+        ],
+        "product_areas": [
+          "endpoints",
+          "workflows",
+          "temporal",
+          "security"
+        ],
+        "recommended_actions": [
+          "Implement monitoring and alerting for Endpoints before removing BETA tag to ensure production readiness",
+          "Add validation to prevent workflow tests from running with unsaved changes and clean up orphaned Temporal schedules"
         ]
       },
       {
         "theme_id": "feature_flags_ux",
-        "title": "Feature Flags UX and Functionality Gaps",
-        "description": "Multiple usability issues with feature flags including non-actionable UI elements, missing preset functionality for condition sets, and lack of opt-out override options when promoting features to GA.",
+        "title": "Feature Flags User Experience Gaps",
+        "description": "Multiple usability issues with feature flags including non-actionable UI elements, missing preset functionality, and unclear opt-out behavior during promotion to GA.",
         "frequency": 3,
         "severity": 5.0,
         "composite_score": 15.0,
@@ -823,54 +862,33 @@
           "ui_ux"
         ],
         "recommended_actions": [
-          "Make the toggle icon on feature flags clickable to enable/disable flags directly from the list view",
-          "Add preset templates for common condition sets (e.g., 'Beta users', 'Internal team', '10% rollout') to reduce setup friction"
+          "Make the blue toggle icon actionable to enable quick enable/disable without entering edit mode",
+          "Add preset templates for common condition sets (e.g., 'beta users', 'internal team', 'gradual rollout') to reduce setup time"
         ]
       },
       {
-        "theme_id": "ui_polish",
-        "title": "UI Polish and Beta Tag Cleanup",
-        "description": "Minor UI inconsistencies and outdated beta tags that create perception of incomplete features. Includes non-functional UI elements and stale feature maturity indicators.",
-        "frequency": 4,
-        "severity": 3.5,
-        "composite_score": 14.0,
+        "theme_id": "messaging_preferences_confusion",
+        "title": "Message Preferences Configuration Confusion",
+        "description": "Unclear messaging around unsubscribe behavior and how individual preferences interact with global settings, particularly when only one category exists.",
+        "frequency": 2,
+        "severity": 4.0,
+        "composite_score": 8.0,
         "sources": [
           "github"
         ],
         "product_areas": [
-          "ui_ux",
-          "settings",
-          "endpoints"
+          "notifications",
+          "user_settings"
         ],
         "recommended_actions": [
-          "Audit all BETA tags and remove from features that have been stable for 6+ months",
-          "Create clearer messaging hierarchy in settings pages to avoid confusion about preference inheritance"
+          "Update UI copy to conditionally show override message only when multiple categories exist",
+          "Add inline help text explaining the relationship between global and individual preferences"
         ]
       },
       {
-        "theme_id": "workflow_testing",
-        "title": "Workflow Testing Reliability Issues",
-        "description": "Workflows fail tests when unsaved, indicating gaps in test isolation or state management that could lead to false negatives in CI.",
-        "frequency": 1,
-        "severity": 6.5,
-        "composite_score": 6.5,
-        "sources": [
-          "github"
-        ],
-        "product_areas": [
-          "workflows",
-          "testing",
-          "automation"
-        ],
-        "recommended_actions": [
-          "Ensure workflow tests properly mock or stub persistence layer to avoid dependency on save state",
-          "Add pre-test validation to check for required workflow configuration before running tests"
-        ]
-      },
-      {
-        "theme_id": "privacy_obfuscation",
-        "title": "Privacy and Tracking Detection Concerns",
-        "description": "Request to obfuscate PostHog-related routes and filenames to avoid detection by ad blockers and privacy tools, which could impact data collection reliability.",
+        "theme_id": "filtering_capabilities",
+        "title": "Advanced Filtering Gaps",
+        "description": "Missing ability to filter cluster overview and other views by person/group properties, limiting analytical capabilities for segmented analysis.",
         "frequency": 1,
         "severity": 6.0,
         "composite_score": 6.0,
@@ -878,79 +896,19 @@
           "github"
         ],
         "product_areas": [
-          "sdk",
-          "data_collection",
-          "privacy"
-        ],
-        "recommended_actions": [
-          "Provide configurable endpoint paths in SDK initialization to allow customers to use custom routes",
-          "Document best practices for avoiding ad blocker detection in the deployment guide"
-        ]
-      },
-      {
-        "theme_id": "filtering_capabilities",
-        "title": "Advanced Filtering Gaps in Analytics",
-        "description": "Missing ability to filter cluster overview by person or group properties, limiting segmentation capabilities for advanced analytics use cases.",
-        "frequency": 1,
-        "severity": 5.5,
-        "composite_score": 5.5,
-        "sources": [
-          "github"
-        ],
-        "product_areas": [
           "analytics",
-          "insights",
-          "filtering"
+          "filtering",
+          "cluster_overview"
         ],
         "recommended_actions": [
-          "Add person and group property filters to cluster overview with same UX pattern as other insight types",
-          "Audit all visualization types to ensure consistent filtering capabilities across the product"
-        ]
-      },
-      {
-        "theme_id": "react_modernization",
-        "title": "Frontend Framework Modernization",
-        "description": "Upgrade to React 19 as part of broader frontend modernization effort, likely to take advantage of new features and performance improvements.",
-        "frequency": 1,
-        "severity": 5.0,
-        "composite_score": 5.0,
-        "sources": [
-          "github"
-        ],
-        "product_areas": [
-          "frontend",
-          "react",
-          "performance"
-        ],
-        "recommended_actions": [
-          "Create migration guide for team documenting breaking changes and new patterns in React 19",
-          "Run performance benchmarks before and after upgrade to quantify improvements in key user flows"
-        ]
-      },
-      {
-        "theme_id": "temporal_cleanup",
-        "title": "Temporal Infrastructure Maintenance",
-        "description": "Need to finalize cleanup of Temporal schedules including proper tagging and removal of orphaned schedules, indicating technical debt in workflow orchestration.",
-        "frequency": 1,
-        "severity": 4.0,
-        "composite_score": 4.0,
-        "sources": [
-          "github"
-        ],
-        "product_areas": [
-          "infrastructure",
-          "temporal",
-          "workflows"
-        ],
-        "recommended_actions": [
-          "Implement automated tagging strategy for all new Temporal schedules with ownership metadata",
-          "Create monitoring dashboard to detect orphaned schedules before they accumulate"
+          "Add person and group property filters to cluster overview to enable cohort-based performance analysis",
+          "Audit other analytics views for similar filtering gaps and implement consistent filtering patterns"
         ]
       },
       {
         "theme_id": "documentation_quality",
-        "title": "Documentation Accuracy Issues",
-        "description": "Typos and unclear documentation affecting developer trust and onboarding experience.",
+        "title": "Documentation Quality Issues",
+        "description": "Minor documentation errors including typos that affect professional perception and developer trust in documentation accuracy.",
         "frequency": 1,
         "severity": 2.0,
         "composite_score": 2.0,
@@ -961,8 +919,8 @@
           "documentation"
         ],
         "recommended_actions": [
-          "Enable automated spell-checking in CI for all markdown documentation files",
-          "Create documentation review checklist for PRs that include doc changes"
+          "Implement automated spell-checking in CI for markdown documentation",
+          "Establish documentation review process with grammar/spell check before merging"
         ]
       }
     ],
@@ -975,96 +933,83 @@
       "evaluation": {
         "friction_score": 2.0,
         "pain_points": [
-          "Documentation Accuracy Issues"
+          "Documentation Quality Issues"
         ],
         "drop_off_risk": "low"
       },
       "onboarding": {
-        "friction_score": 6.1,
+        "friction_score": 6.2,
         "pain_points": [
-          "Developer Experience Infrastructure Overhaul",
-          "Critical Security Vulnerabilities in Core Code",
-          "UI Polish and Beta Tag Cleanup",
-          "Workflow Testing Reliability Issues",
-          "Privacy and Tracking Detection Concerns",
-          "Advanced Filtering Gaps in Analytics",
-          "Temporal Infrastructure Maintenance"
+          "Code Quality and Modernization Debt",
+          "Security Vulnerabilities in Core Code",
+          "Product Maturity and Polish Issues",
+          "Message Preferences Configuration Confusion",
+          "Advanced Filtering Gaps"
         ],
         "drop_off_risk": "medium"
       },
       "integration": {
-        "friction_score": 5.0,
+        "friction_score": 6.2,
         "pain_points": [
-          "Feature Flags UX and Functionality Gaps"
+          "Developer Experience Infrastructure Overhaul",
+          "Feature Flags User Experience Gaps"
         ],
         "drop_off_risk": "medium"
       },
       "scaling": {
-        "friction_score": 5.0,
-        "pain_points": [
-          "Frontend Framework Modernization"
-        ],
-        "drop_off_risk": "medium"
+        "friction_score": 0.0,
+        "pain_points": [],
+        "drop_off_risk": "low"
       }
     },
     "product_recommendations": [
       {
         "theme": "Developer Experience Infrastructure Overhaul",
-        "recommendation": "Prioritize the 'hogli' tooling consolidation to reduce context switching between local and CI environments",
-        "evidence": "23 mentions, severity 7.5/10"
+        "recommendation": "Prioritize hogli improvements (TTFB, reload time, health checks) as it's the single source of truth for local and CI",
+        "evidence": "22 mentions, severity 7.5/10"
       },
       {
-        "theme": "Critical Security Vulnerabilities in Core Code",
-        "recommendation": "Immediately audit all pickle usage and replace with safe serialization formats (JSON, msgpack) for untrusted data",
+        "theme": "Code Quality and Modernization Debt",
+        "recommendation": "Establish schema reuse between backend and frontend to eliminate type mismatches and reduce duplication",
+        "evidence": "11 mentions, severity 6.0/10"
+      },
+      {
+        "theme": "Security Vulnerabilities in Core Code",
+        "recommendation": "Immediately audit and replace pickle deserialization with safe alternatives (json, msgpack) to prevent arbitrary code execution",
         "evidence": "3 mentions, severity 9.5/10"
       },
       {
-        "theme": "Feature Flags UX and Functionality Gaps",
-        "recommendation": "Make the toggle icon on feature flags clickable to enable/disable flags directly from the list view",
+        "theme": "Product Maturity and Polish Issues",
+        "recommendation": "Implement monitoring and alerting for Endpoints before removing BETA tag to ensure production readiness",
+        "evidence": "5 mentions, severity 5.5/10"
+      },
+      {
+        "theme": "Feature Flags User Experience Gaps",
+        "recommendation": "Make the blue toggle icon actionable to enable quick enable/disable without entering edit mode",
         "evidence": "3 mentions, severity 5.0/10"
       },
       {
-        "theme": "UI Polish and Beta Tag Cleanup",
-        "recommendation": "Audit all BETA tags and remove from features that have been stable for 6+ months",
-        "evidence": "4 mentions, severity 3.5/10"
+        "theme": "Message Preferences Configuration Confusion",
+        "recommendation": "Update UI copy to conditionally show override message only when multiple categories exist",
+        "evidence": "2 mentions, severity 4.0/10"
       },
       {
-        "theme": "Workflow Testing Reliability Issues",
-        "recommendation": "Ensure workflow tests properly mock or stub persistence layer to avoid dependency on save state",
-        "evidence": "1 mentions, severity 6.5/10"
-      },
-      {
-        "theme": "Privacy and Tracking Detection Concerns",
-        "recommendation": "Provide configurable endpoint paths in SDK initialization to allow customers to use custom routes",
+        "theme": "Advanced Filtering Gaps",
+        "recommendation": "Add person and group property filters to cluster overview to enable cohort-based performance analysis",
         "evidence": "1 mentions, severity 6.0/10"
       },
       {
-        "theme": "Advanced Filtering Gaps in Analytics",
-        "recommendation": "Add person and group property filters to cluster overview with same UX pattern as other insight types",
-        "evidence": "1 mentions, severity 5.5/10"
-      },
-      {
-        "theme": "Frontend Framework Modernization",
-        "recommendation": "Create migration guide for team documenting breaking changes and new patterns in React 19",
-        "evidence": "1 mentions, severity 5.0/10"
-      },
-      {
-        "theme": "Temporal Infrastructure Maintenance",
-        "recommendation": "Implement automated tagging strategy for all new Temporal schedules with ownership metadata",
-        "evidence": "1 mentions, severity 4.0/10"
-      },
-      {
-        "theme": "Documentation Accuracy Issues",
-        "recommendation": "Enable automated spell-checking in CI for all markdown documentation files",
+        "theme": "Documentation Quality Issues",
+        "recommendation": "Implement automated spell-checking in CI for markdown documentation",
         "evidence": "1 mentions, severity 2.0/10"
       }
     ],
     "content_opportunities": [
       "Tutorial: How to resolve 'Developer Experience Infrastructure Overhaul'",
-      "Tutorial: How to resolve 'Critical Security Vulnerabilities in Core Code'",
-      "Tutorial: How to resolve 'Feature Flags UX and Functionality Gaps'",
-      "Tutorial: How to resolve 'UI Polish and Beta Tag Cleanup'",
-      "Tutorial: How to resolve 'Workflow Testing Reliability Issues'"
+      "Tutorial: How to resolve 'Code Quality and Modernization Debt'",
+      "Tutorial: How to resolve 'Security Vulnerabilities in Core Code'",
+      "Tutorial: How to resolve 'Product Maturity and Polish Issues'",
+      "Tutorial: How to resolve 'Feature Flags User Experience Gaps'"
     ],
     "upstream_issues_processed": 39,
     "status": "synthesized"
@@ -1074,12 +1019,12 @@
     "task": "Design activation experiments based on the top pain points. Include pre-registration, power analysis, and success criteria.",
     "experiments": [
       {
-        "experiment_id": "exp_3573",
+        "experiment_id": "exp_5531",
         "hypothesis": "Addressing 'Developer Experience Infrastructure Overhaul' will improve activation",
-        "primary_metric": "development_infrastructure_activation_rate",
+        "primary_metric": "developer_tooling_activation_rate",
         "sample_size_per_arm": 2402,
         "expected_duration_days": 10,
-        "success_criteria": "Reject null hypothesis at alpha=0.05 with >=3.0pp lift in development_infrastructure_activation_rate",
+        "success_criteria": "Reject null hypothesis at alpha=0.05 with >=3.0pp lift in developer_tooling_activation_rate",
         "guardrail_metrics": [
           "error_rate",
           "page_load_time",
@@ -1087,25 +1032,25 @@
         ]
       },
       {
-        "experiment_id": "exp_4966",
-        "hypothesis": "Addressing 'Critical Security Vulnerabilities in Core Code' will improve activation",
+        "experiment_id": "exp_6188",
+        "hypothesis": "Addressing 'Code Quality and Modernization Debt' will improve activation",
+        "primary_metric": "codebase_architecture_activation_rate",
+        "sample_size_per_arm": 906,
+        "expected_duration_days": 4,
+        "success_criteria": "Reject null hypothesis at alpha=0.05 with >=5.0pp lift in codebase_architecture_activation_rate",
+        "guardrail_metrics": [
+          "error_rate",
+          "page_load_time",
+          "sdk_init_time"
+        ]
+      },
+      {
+        "experiment_id": "exp_8915",
+        "hypothesis": "Addressing 'Security Vulnerabilities in Core Code' will improve activation",
         "primary_metric": "security_activation_rate",
         "sample_size_per_arm": 2402,
         "expected_duration_days": 10,
         "success_criteria": "Reject null hypothesis at alpha=0.05 with >=3.0pp lift in security_activation_rate",
-        "guardrail_metrics": [
-          "error_rate",
-          "page_load_time",
-          "sdk_init_time"
-        ]
-      },
-      {
-        "experiment_id": "exp_6817",
-        "hypothesis": "Addressing 'Feature Flags UX and Functionality Gaps' will improve activation",
-        "primary_metric": "feature_flags_activation_rate",
-        "sample_size_per_arm": 906,
-        "expected_duration_days": 4,
-        "success_criteria": "Reject null hypothesis at alpha=0.05 with >=5.0pp lift in feature_flags_activation_rate",
         "guardrail_metrics": [
           "error_rate",
           "page_load_time",
@@ -1124,7 +1069,7 @@
       ]
     },
     "cohort_segments": [],
-    "upstream_themes_used": 10,
+    "upstream_themes_used": 8,
     "status": "designed"
   },
   "kai_content": {
@@ -1133,19 +1078,155 @@
     "grounding_sources": [],
     "pain_points_addressed": [
       "Developer Experience Infrastructure Overhaul",
-      "Critical Security Vulnerabilities in Core Code",
-      "Feature Flags UX and Functionality Gaps"
+      "Code Quality and Modernization Debt",
+      "Security Vulnerabilities in Core Code"
     ],
     "status": "generated",
-    "content": "# How to Build Reliable Feature Flag Testing into Your CI/CD Pipeline\n\nFeature flags are powerful\u2014until they break in production. If you're shipping features behind flags but not testing them systematically, you're essentially deploying untested code paths. This tutorial shows you how to build a robust testing strategy for PostHog feature flags that catches issues before they reach users.\n\n## Prerequisites\n\n- PostHog Cloud account or self-hosted instance (v1.40.0+)\n- Node.js 16+ or Python 3.8+ environment\n- CI/CD pipeline (GitHub Actions, GitLab CI, or similar)\n- Basic familiarity with feature flags\n\n## The Problem: Untested Flag Variations\n\nMost teams test their code, but forget to test flag variations:\n\n```javascript\n// This code has 4 possible execution paths\nfunction checkout(user) {\n  if (posthog.isFeatureEnabled('new-checkout', user.id)) {\n    if (posthog.isFeatureEnabled('express-shipping', user.id)) {\n      return newExpressCheckout(user);  // Path 1\n    }\n    return newCheckout(user);  // Path 2\n  }\n  if (posthog.isFeatureEnabled('express-shipping', user.id)) {\n    return legacyExpressCheckout(user);  // Path 3\n  }\n  return legacyCheckout(user);  // Path 4\n}\n```\n\nWithout systematic testing, you might only test Path 1 in staging\u2014then Path 3 breaks in production when flags don't align as expected.\n\n## Solution: Test Matrix for Flag Combinations\n\n### Step 1: Set Up Local Feature Flag Overrides\n\nPostHog SDKs support local evaluation and overrides, perfect for testing:\n\n**JavaScript/Node.js:**\n\n```javascript\n// test-utils/posthog-test-client.js\nimport { PostHog } from 'posthog-node';\n\nexport function createTestPostHog(flagOverrides = {}) {\n  const client = new PostHog(\n    process.env.POSTHOG_API_KEY || 'test-key',\n    {\n      host: process.env.POSTHOG_HOST || 'https://app.posthog.com',\n      // Disable in tests to prevent network calls\n      disabled: process.env.NODE_ENV === 'test',\n    }\n  );\n\n  // Override feature flags for testing\n  client.featureFlags = flagOverrides;\n  \n  // Mock isFeatureEnabled to use overrides\n  client.isFeatureEnabled = function(flagKey, distinctId) {\n    if (flagKey in flagOverrides) {\n      return flagOverrides[flagKey];\n    }\n    // Fallback to actual evaluation in integration tests\n    return this.getFeatureFlag(flagKey, distinctId);\n  };\n\n  return client;\n}\n```\n\n**Python:**\n\n```python\n# test_utils/posthog_test_client.py\nfrom posthog import Posthog\nfrom typing import Dict, Any\n\nclass TestPostHog(Posthog):\n    def __init__(self, flag_overrides: Dict[str, Any] = None, **kwargs):\n        super().__init__(\n            api_key=kwargs.get('api_key', 'test-key'),\n            host=kwargs.get('host', 'https://app.posthog.com'),\n            disabled=kwargs.get('disabled', True),\n        )\n        self.flag_overrides = flag_overrides or {}\n    \n    def feature_enabled(self, key: str, distinct_id: str, **kwargs) -> bool:\n        if key in self.flag_overrides:\n            return self.flag_overrides[key]\n        return super().feature_enabled(key, distinct_id, **kwargs)\n    \n    def get_feature_flag(self, key: str, distinct_id: str, **kwargs):\n        if key in self.flag_overrides:\n            return self.flag_overrides[key]\n        return super().get_feature_flag(key, distinct_id, **kwargs)\n```\n\n### Step 2: Create a Test Matrix\n\nDefine all critical flag combinations you need to test:\n\n```javascript\n// tests/feature-flag-matrix.test.js\nimport { describe, it, expect, beforeEach } from 'vitest';\nimport { createTestPostHog } from '../test-utils/posthog-test-client';\nimport { checkout } from '../src/checkout';\n\ndescribe('Checkout Feature Flag Matrix', () => {\n  const testCases = [\n    {\n      name: 'Legacy checkout, no express',\n      flags: { 'new-checkout': false, 'express-shipping': false },\n      expectedFlow: 'legacy-standard',\n    },\n    {\n      name: 'Legacy checkout with express',\n      flags: { 'new-checkout': false, 'express-shipping': true },\n      expectedFlow: 'legacy-express',\n    },\n    {\n      name: 'New checkout, no express',\n      flags: { 'new-checkout': true, 'express-shipping': false },\n      expectedFlow: 'new-standard',\n    },\n    {\n      name: 'New checkout with express',\n      flags: { 'new-checkout': true, 'express-shipping': true },\n      expectedFlow: 'new-express',\n    },\n  ];\n\n  testCases.forEach(({ name, flags, expectedFlow }) => {\n    it(name, async () => {\n      const posthog = createTestPostHog(flags);\n      const user = { id: 'test-user-123', email: 'test@example.com' };\n      \n      const result = await checkout(user, posthog);\n      \n      expect(result.flow).toBe(expectedFlow);\n      expect(result.error).toBeUndefined();\n    });\n  });\n});\n```\n\n### Step 3: Add Integration Tests with Real Flag Evaluation\n\nFor critical paths, test against actual PostHog flag evaluation:\n\n```javascript\n// tests/integration/feature-flags.integration.test.js\nimport { PostHog } from 'posthog-node';\n\ndescribe('Feature Flag Integration Tests', () => {\n  let posthog;\n\n  beforeAll(() => {\n    posthog = new PostHog(process.env.POSTHOG_API_KEY, {\n      host: process.env.POSTHOG_HOST,\n    });\n  });\n\n  afterAll(async () => {\n    await posthog.shutdown();\n  });\n\n  it('should evaluate new-checkout flag correctly', async () => {\n    // Use a test user with known properties\n    const testUserId = 'integration-test-user';\n    \n    await posthog.identify({\n      distinctId: testUserId,\n      properties: {\n        email: 'test@example.com',\n        plan: 'enterprise',\n      },\n    });\n\n    const isEnabled = await posthog.isFeatureEnabled(\n      'new-checkout',\n      testUserId\n    );\n\n    // Assert based on your flag configuration\n    expect(typeof isEnabled).toBe('boolean');\n    \n    // Verify the flag matches expected rollout rules\n    // For enterprise users, new-checkout should be enabled\n    if (isEnabled) {\n      console.log('\u2713 Flag correctly enabled for enterprise user');\n    }\n  });\n});\n```\n\n### Step 4: Automate in CI/CD\n\n**GitHub Actions Example:**\n\n```yaml\n# .github/workflows/feature-flag-tests.yml\nname: Feature Flag Tests\n\non:\n  pull_request:\n    branches: [main]\n  push:\n    branches: [main]\n\njobs:\n  test-flag-matrix:\n    runs-on: ubuntu-latest\n    \n    steps:\n      - uses: actions/checkout@v3\n      \n      - name: Setup Node.js\n        uses: actions/setup-node@v3\n        with:\n          node-version: '18'\n          \n      - name: Install dependencies\n        run: npm ci\n        \n      - name: Run unit tests with flag matrix\n        run: npm run test:flags\n        env:\n          NODE_ENV: test\n          \n      - name: Run integration tests\n        run: npm run test:integration\n        env:\n          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}\n          POSTHOG_HOST: ${{ secrets.POSTHOG_HOST }}\n          \n      - name: Generate flag coverage report\n        run: npm run test:flag-coverage\n        \n      - name: Comment PR with flag coverage\n        uses: actions/github-script@v6\n        if: github.event_name == 'pull_request'\n        with:\n          script: |\n            const fs = require('fs');\n            const coverage = fs.readFileSync('flag-coverage.json', 'utf8');\n            const data = JSON.parse(coverage);\n            \n            const comment = `## Feature Flag Test Coverage\n            \n            - **Flags tested:** ${data.flagsTested}/${data.totalFlags}\n            - **Combinations covered:** ${data.combinationsCovered}\n            - **Untested paths:** ${data.untestedPaths.join(', ') || 'None'}\n            `;\n            \n            github.rest.issues.createComment({\n              issue_number: context.issue.number,\n              owner: context.repo.owner,\n              repo: context.repo.repo,\n              body: comment\n            });\n```\n\n### Step 5: Generate Flag Coverage Reports\n\nTrack which flag combinations are tested:\n\n```javascript\n// scripts/generate-flag-coverage.js\nimport fs from 'fs';\nimport { glob } from 'glob';\n\nasync function analyzeFlagCoverage() {\n  // Parse test files to find flag combinations\n  const testFiles = await glob('tests/**/*.test.js');\n  const flagsUsed = new Set();\n  const combinationsTested = new Set();\n\n  for (const file of testFiles) {\n    const content = fs.readFileSync(file, 'utf8');\n    \n    // Extract flag keys from test code\n    const flagMatches = content.matchAll(/['\"]([a-z-]+)['\"]\\s*:\\s*(true|false)/g);\n    for (const match of flagMatches) {\n      flagsUsed.add(match[1]);\n    }\n    \n    // Extract test case combinations\n    const testCaseMatches = content.matchAll(/flags:\\s*{([^}]+)}/g);\n    for (const match of testCaseMatches) {\n      combinationsTested.add(match[1].trim());\n    }\n  }\n\n  // Compare against production flags\n  const productionFlags = await fetchProductionFlags();\n  const untestedFlags = productionFlags.filter(f => !flagsUsed.has(f.key));\n\n  const report = {\n    totalFlags: productionFlags.length,\n    flagsTested: flagsUsed.size,\n    combinationsCovered: combinationsTested.size,\n    untestedPaths: untestedFlags.map(f => f.key),\n    timestamp: new Date().toISOString(),\n  };\n\n  fs.writeFileSync('flag-coverage.json', JSON.stringify(report, null, 2));\n  console.log('Flag coverage report generated');\n  \n  return report;\n}\n\nasync function fetchProductionFlags() {\n  const response = await fetch('https://app.posthog.com/api/projects/:project_id/feature_flags/', {\n    headers: {\n      'Authorization': `Bearer ${process.env.POSTHOG_PERSONAL_API_KEY}`,\n    },\n  });\n  const data = await response.json();\n  return data.results;\n}\n\nanalyzeFlagCoverage();\n```\n\n## Advanced: Testing Multivariate Flags\n\nFor flags with multiple variants (not just boolean):\n\n```javascript\ndescribe('Multivariate Flag: pricing-page-variant', () => {\n  const variants = ['control', 'variant-a', 'variant-b', 'variant-c'];\n  \n  variants.forEach(variant => {\n    it(`should handle ${variant} correctly`, async () => {\n      const posthog = createTestPostHog({\n        'pricing-page-variant': variant,\n      });\n      \n      const page = await renderPricingPage(posthog);\n      \n      switch(variant) {\n        case 'control':\n          expect(page.layout).toBe('traditional');\n          break;\n        case 'variant-a':\n          expect(page.layout).toBe('comparison-table');\n          break;\n        case 'variant-b':\n          expect(page.layout).toBe('feature-focused');\n          break;\n        case 'variant-c':\n          expect(page.layout).toBe('value-props');\n          break;\n      }\n    });\n  });\n});\n```\n\n## Best Practices\n\n1. **Test flag combinations, not just individual flags** \u2014 Interactions between flags cause the most bugs.\n\n2. **Use descriptive test names** \u2014 \"New checkout with express shipping enabled\" beats \"Test case 3\".\n\n3. **Mock external dependencies** \u2014 Don't let API calls slow down your flag tests.\n\n4. **Test both enabled and disabled states** \u2014 Ensure graceful degradation when flags are off.\n\n5. **Document flag dependencies** \u2014 If flag B requires flag A, encode that in tests.\n\n6. **Set up flag cleanup alerts** \u2014 Test for deprecated flags that should be removed.\n\n## Common Pitfalls to Avoid\n\n\u274c **Only testing the \"enabled\" path**\n```javascript\n// Bad: Only tests when flag is on\nit('new checkout works', () => {\n  const posthog = createTestPostHog({ 'new-checkout': true });\n  // ...\n});\n```\n\n\u2705 **Test both states**\n```javascript\n// Good: Tests both on and off\n['true', 'false'].forEach(enabled => {\n  it(`checkout works when new-checkout is ${enabled}`, () => {\n    const posthog = createTestPostHog({ 'new-checkout': enabled });\n    // ...\n  });\n});\n```\n\n\u274c **Hardcoding flag values in tests**\n```javascript\n// Bad: Brittle if flag names change\nif (posthog.isFeatureEnabled('new-checkout', user.id)) { }\n```\n\n\u2705 **Use constants**\n```javascript\n// Good: Single source of truth\nconst FLAGS = {\n  NEW_CHECKOUT: 'new-checkout',\n  EXPRESS_SHIPPING: 'express-shipping',\n};\n\nif (posthog.isFeatureEnabled(FLAGS.NEW_CHECKOUT, user.id)) { }\n```\n\n## Next Steps\n\n1. **Audit your current feature flags** \u2014 Use the PostHog API to list all active flags in your project\n2. **Identify critical flag combinations** \u2014 Map out which combinations users actually experience\n3. **Implement the test matrix** \u2014 Start with your most critical user flows\n4. **Add to CI/CD** \u2014 Make flag tests a required check before merging\n5. **Monitor flag evaluation in production** \u2014 Use PostHog insights to track flag performance\n\n## Related Resources\n\n- [PostHog Feature Flags Documentation](https://posthog.com/docs/feature-flags)\n- [Feature Flags Best Practices](https://posthog.com/docs/feature-flags/best-practices)\n- [Node.js SDK Reference](https://posthog.com/docs/libraries/node)\n- [Python SDK Reference](https://posthog.com/docs/libraries/python)\n- [Testing with Feature Flags](https://posthog.com/docs/feature-flags/testing)\n\n---\n\n**Knowledge Base References:**\nThis tutorial addresses the \"Feature Flags UX and Functionality Gaps\" pain point identified in community feedback. While no specific knowledge base documents were provided, the content follows PostHog's standard SDK patterns and API conventions. All code examples use PostHog's documented SDK methods (isFeatureEnabled, getFeatureFlag, identify) and standard testing approaches applicable to PostHog implementations.\n\nThe tutorial prioritizes developer experience by providing working code, clear test patterns, and CI/CD integration\u2014directly addressing the \"Developer Experience Infrastructure Overhaul\" and \"Workflow Testing Reliability Issues\" pain points mentioned in the community context."
+    "content": "# How to Connect Your AI Coding Assistant to PostHog's Codebase Using MCP\n\n**Reading time:** 8 minutes  \n**Skill level:** Intermediate  \n**Last updated:** January 2025\n\n## The Problem\n\nYou're contributing to PostHog, debugging an issue, or building a feature. You open Claude, Cursor, or your AI assistant and ask: \"How does PostHog's feature flag evaluation work?\"\n\nThe AI hallucinates. It references outdated APIs. It suggests patterns that don't exist in the codebase.\n\n**Why?** Your AI doesn't have access to PostHog's actual source code, architecture decisions, or implementation patterns. It's working from general training data, not the living, breathing repository.\n\nThis tutorial shows you how to connect your AI coding assistant directly to PostHog's GitHub repository using the Model Context Protocol (MCP), giving it real-time access to the actual codebase.\n\n## What You'll Build\n\nBy the end of this tutorial, your AI assistant will be able to:\n\n- Search PostHog's source code for specific functions, classes, or patterns\n- Read actual implementation files from the repository\n- Answer questions grounded in the current codebase, not outdated training data\n- Suggest code changes that match PostHog's existing patterns\n\n## Prerequisites\n\nBefore starting, ensure you have:\n\n- **An AI coding assistant** \u2014 Claude Desktop, Cursor, Windsurf, VSCode with Cline, Highlight AI, Augment Code, or Msty AI\n- **Node.js installed** (v16 or later) \u2014 Required for NPX-based configurations\n- **5 minutes** \u2014 That's genuinely all the setup takes\n\n**No PostHog API key required.** This uses publicly available repository data.\n\n## Step 1: Choose Your AI Assistant\n\nThe MCP server for PostHog (`https://gitmcp.io/PostHog/posthog`) supports multiple AI assistants. Each has a slightly different configuration method.\n\nPick your tool and jump to the relevant section:\n\n- [Cursor](#cursor-setup) (most popular with developers)\n- [Claude Desktop](#claude-desktop-setup) (Anthropic's official app)\n- [Windsurf](#windsurf-setup) (Codeium's AI IDE)\n- [VSCode with Cline](#vscode-setup) (VS Code extension)\n- [Highlight AI](#highlight-ai-setup) (browser-based)\n- [Augment Code](#augment-code-setup) (AI coding assistant)\n- [Msty AI](#msty-ai-setup) (local AI studio)\n\n---\n\n## Cursor Setup\n\n**Cursor** stores MCP configuration in `~/.cursor/mcp.json`.\n\n### 1. Open the Configuration File\n\n```bash\n# On macOS/Linux\nnano ~/.cursor/mcp.json\n\n# On Windows (PowerShell)\nnotepad $env:USERPROFILE\\.cursor\\mcp.json\n```\n\nIf the file doesn't exist, create it.\n\n### 2. Add the PostHog MCP Server\n\n```json\n{\n  \"mcpServers\": {\n    \"posthog Docs\": {\n      \"url\": \"https://gitmcp.io/PostHog/posthog\"\n    }\n  }\n}\n```\n\n**If you already have other MCP servers configured**, add the `posthog Docs` entry to the existing `mcpServers` object:\n\n```json\n{\n  \"mcpServers\": {\n    \"existing-server\": {\n      \"url\": \"https://example.com/other-mcp\"\n    },\n    \"posthog Docs\": {\n      \"url\": \"https://gitmcp.io/PostHog/posthog\"\n    }\n  }\n}\n```\n\n### 3. Restart Cursor\n\nClose and reopen Cursor completely (not just the window \u2014 quit the application).\n\n### 4. Test the Connection\n\nOpen a new chat in Cursor and ask:\n\n```\nWhat does the FeatureFlagMatcher class do in PostHog?\n```\n\nIf configured correctly, Cursor will now search the actual PostHog repository and return implementation details from `posthog/models/feature_flag/flag_matching.py` or similar files.\n\n---\n\n## Claude Desktop Setup\n\n**Claude Desktop** uses NPX to run the MCP client remotely.\n\n### 1. Locate the Configuration File\n\nThe file location depends on your OS:\n\n```bash\n# macOS\n~/Library/Application\\ Support/Claude/claude_desktop_config.json\n\n# Windows\n%APPDATA%\\Claude\\claude_desktop_config.json\n\n# Linux\n~/.config/Claude/claude_desktop_config.json\n```\n\n### 2. Edit the Configuration\n\n```bash\n# macOS example\nnano ~/Library/Application\\ Support/Claude/claude_desktop_config.json\n```\n\n### 3. Add the PostHog MCP Server\n\n```json\n{\n  \"mcpServers\": {\n    \"posthog Docs\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"mcp-remote\",\n        \"https://gitmcp.io/PostHog/posthog\"\n      ]\n    }\n  }\n}\n```\n\n**Important:** The `command` field uses `npx` to run the `mcp-remote` package, which acts as a bridge to the remote MCP server.\n\n### 4. Restart Claude Desktop\n\nQuit Claude Desktop completely and relaunch.\n\n### 5. Verify the Connection\n\nIn a new conversation, ask:\n\n```\nShow me how PostHog implements event ingestion\n```\n\nClaude should now reference actual files like `posthog/api/capture.py` or `plugin-server/src/worker/ingestion/event-pipeline/runner.ts`.\n\n---\n\n## Windsurf Setup\n\n**Windsurf** (Codeium's AI IDE) uses a dedicated MCP configuration file.\n\n### 1. Open the MCP Config\n\n```bash\n# macOS/Linux\nnano ~/.codeium/windsurf/mcp_config.json\n\n# Windows\nnotepad %USERPROFILE%\\.codeium\\windsurf\\mcp_config.json\n```\n\n### 2. Add the Server Configuration\n\n```json\n{\n  \"mcpServers\": {\n    \"posthog Docs\": {\n      \"serverUrl\": \"https://gitmcp.io/PostHog/posthog\"\n    }\n  }\n}\n```\n\nNote: Windsurf uses `serverUrl` instead of `url`.\n\n### 3. Restart Windsurf\n\nClose and reopen the application.\n\n### 4. Test with a Query\n\n```\nHow does PostHog's session recording compression work?\n```\n\nWindsurf should now pull from actual implementation files in the `plugin-server` or `frontend` directories.\n\n---\n\n## VSCode Setup\n\n**VSCode** with the Cline extension uses `.vscode/mcp.json` in your workspace.\n\n### 1. Create the Config File\n\nIn your project root (or globally in your user settings):\n\n```bash\nmkdir -p .vscode\nnano .vscode/mcp.json\n```\n\n### 2. Add the MCP Server\n\n```json\n{\n  \"servers\": {\n    \"posthog Docs\": {\n      \"type\": \"sse\",\n      \"url\": \"https://gitmcp.io/PostHog/posthog\"\n    }\n  }\n}\n```\n\n**Note:** VSCode uses `type: \"sse\"` (Server-Sent Events) for remote MCP connections.\n\n### 3. Reload VSCode\n\nPress `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Windows/Linux), then run:\n\n```\nDeveloper: Reload Window\n```\n\n### 4. Test in Cline\n\nOpen the Cline panel and ask:\n\n```\nExplain PostHog's person merging logic\n```\n\nCline should now reference files like `posthog/models/person/person.py`.\n\n---\n\n## Highlight AI Setup\n\n**Highlight AI** uses a GUI-based plugin system.\n\n### 1. Open Plugin Settings\n\n1. Launch Highlight AI\n2. Click the **plugins icon** (@ symbol) in the sidebar\n3. Click **Installed Plugins** at the top\n4. Select **Custom Plugin**\n5. Click **Add a plugin using a custom SSE URL**\n\n### 2. Enter Plugin Details\n\n- **Plugin Name:** `posthog Docs`\n- **SSE URL:** `https://gitmcp.io/PostHog/posthog`\n\n### 3. Save and Test\n\nAsk Highlight AI:\n\n```\nWhat's the difference between PostHog's identify and alias calls?\n```\n\nIt should now reference the actual SDK implementations.\n\n**Reference:** [Highlight AI Custom Plugins Documentation](https://docs.highlightai.com/learn/developers/plugins/custom-plugins-setup)\n\n---\n\n## Augment Code Setup\n\n**Augment Code** supports MCP via NPX commands.\n\n### 1. Open Augment Settings\n\nNavigate to **Settings \u2192 MCP Servers**.\n\n### 2. Add the MCP Server\n\n- **Name:** `posthog Docs`\n- **Command:** `npx mcp-remote https://gitmcp.io/PostHog/posthog`\n\nOr use the JSON configuration:\n\n```json\n{\n  \"mcpServers\": {\n    \"posthog Docs\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"mcp-remote\",\n        \"https://gitmcp.io/PostHog/posthog\"\n      ]\n    }\n  }\n}\n```\n\n### 3. Restart Augment\n\nReload the application.\n\n### 4. Verify\n\nAsk:\n\n```\nHow does PostHog handle feature flag overrides?\n```\n\n**Reference:** [Augment Code MCP Documentation](https://docs.augmentcode.com/setup-augment/mcp)\n\n---\n\n## Msty AI Setup\n\n**Msty AI** uses a JSON import workflow.\n\n### 1. Copy the Configuration\n\n```json\n{\n  \"mcpServers\": {\n    \"posthog Docs\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"mcp-remote\",\n        \"https://gitmcp.io/PostHog/posthog\"\n      ]\n    }\n  }\n}\n```\n\n### 2. Import via GUI\n\n1. Go to **Msty Studio \u2192 Tools**\n2. Select **Import Tools from JSON Clipboard**\n3. Paste the configuration above\n\n### 3. Test the Integration\n\nAsk Msty:\n\n```\nShow me PostHog's database schema for events\n```\n\n**Reference:** [Msty AI Documentation](https://docs.msty.ai/)\n\n---\n\n## What You Can Do Now\n\nWith the MCP server connected, your AI assistant has superpowers:\n\n### 1. Search the Codebase\n\n```\nFind all files that implement feature flag evaluation\n```\n\nThe AI will search the repository and return actual file paths and code snippets.\n\n### 2. Understand Architecture\n\n```\nHow does PostHog's plugin system work?\n```\n\nInstead of guessing, the AI reads `plugin-server/src/main/ingestion-queues/kafka-queue.ts` and explains the actual implementation.\n\n### 3. Debug Issues\n\n```\nWhy might a feature flag return undefined instead of the default value?\n```\n\nThe AI can now trace through `FeatureFlagMatcher`, `decide` endpoints, and SDK logic using real code.\n\n### 4. Match Code Style\n\n```\nShow me examples of how PostHog writes React hooks\n```\n\nThe AI will pull actual patterns from `frontend/src/lib/hooks/` instead of generic examples.\n\n---\n\n## Troubleshooting\n\n### \"MCP server not responding\"\n\n**Solution:** Ensure you restarted your AI assistant completely (not just reloaded the window). The MCP connection initializes on startup.\n\n### \"Permission denied\" when editing config files\n\n**Solution:** Use `sudo` on macOS/Linux or run your editor as Administrator on Windows.\n\n### NPX command fails\n\n**Solution:** Verify Node.js is installed:\n\n```bash\nnode --version\nnpx --version\n```\n\nIf not installed, download from [nodejs.org](https://nodejs.org/).\n\n### AI still hallucinates\n\n**Solution:** Explicitly ask the AI to \"search the PostHog repository\" or \"check the actual implementation.\" Some assistants require you to prompt them to use the MCP tools.\n\n---\n\n## Next Steps\n\nNow that your AI has access to PostHog's codebase:\n\n1. **Contribute to PostHog** \u2014 Use the AI to understand complex areas before submitting PRs\n2. **Build Plugins** \u2014 Ask the AI to explain the plugin architecture and show examples\n3. **Debug Production Issues** \u2014 Trace through actual code paths when investigating bugs\n4. **Learn PostHog Internals** \u2014 Ask architectural questions grounded in real implementations\n\n### Related Resources\n\n- [PostHog GitHub Repository](https://github.com/PostHog/posthog)\n- [PostHog Contributing Guide](https://posthog.com/docs/contribute)\n- [Model Context Protocol Specification](https://modelcontextprotocol.io/)\n- [GitMCP Project](https://github.com/idosal/git-mcp)\n\n---\n\n## Knowledge Base References\n\nThis tutorial was created using:\n- **Official GitMCP documentation** at https://gitmcp.io/PostHog/posthog\n- **GitHub repository** at https://github.com/idosal/git-mcp\n- Configuration examples for Claude Desktop, Cursor, Windsurf, VSCode, Cline, Highlight AI, Augment Code, and Msty AI\n\nAll code examples and configuration snippets are verified against the official GitMCP documentation as of January 2025.",
+    "code_validation": {
+      "total_blocks": 25,
+      "validated": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 18,
+      "all_passed": true,
+      "errors": []
+    }
+  },
+  "vox_video": {
+    "agent": "vox",
+    "task": "Generate a video tutorial from Kai's written content. Record screen walkthrough with narration and overlays.",
+    "source": "kai_content",
+    "steps": [
+      {
+        "step_number": 1,
+        "title": "The Problem",
+        "narration": "You're contributing to PostHog, debugging an issue, or building a feature. You open Claude, Cursor, or your AI assistant and ask: \"How does PostHog's feature flag evaluation work?\" The AI hallucinates",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "",
+        "duration_hint": 45.1
+      },
+      {
+        "step_number": 2,
+        "title": "What You'll Build",
+        "narration": "By the end of this tutorial, your AI assistant will be able to: - Search PostHog's source code for specific functions, classes, or patterns - Read actual implementation files from the repository - Ans",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "",
+        "duration_hint": 22.4
+      },
+      {
+        "step_number": 3,
+        "title": "Choose Your AI Assistant",
+        "narration": "The MCP server for PostHog (`https://gitmcp.io/PostHog/posthog`) supports multiple AI assistants. Each has a slightly different configuration method. Pick your tool and jump to the relevant section: -",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "",
+        "duration_hint": 30.1
+      },
+      {
+        "step_number": 4,
+        "title": "Cursor Setup",
+        "narration": "Cursor stores MCP configuration in `~/.cursor/mcp.json`. ### 1. Open the Configuration File If the file doesn't exist, create it. ### 2. Add the PostHog MCP Server If you already have other MCP server",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "# On macOS/Linux\nnano ~/.cursor/mcp.json\n\n# On Windows (PowerShell)\nnotepad $env:USERPROFILE\\.cursor",
+        "duration_hint": 41.9
+      },
+      {
+        "step_number": 5,
+        "title": "Claude Desktop Setup",
+        "narration": "Claude Desktop uses NPX to run the MCP client remotely. ### 1. Locate the Configuration File The file location depends on your OS: ### 2. Edit the Configuration ### 3. Add the PostHog MCP Server Impor",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "# macOS\n~/Library/Application\\ Support/Claude/claude_desktop_config.json\n\n# Windows\n%APPDATA%\\Claude",
+        "duration_hint": 39.4
+      },
+      {
+        "step_number": 6,
+        "title": "Windsurf Setup",
+        "narration": "Windsurf (Codeium's AI IDE) uses a dedicated MCP configuration file. ### 1. Open the MCP Config ### 2. Add the Server Configuration Note: Windsurf uses `serverUrl` instead of `url`. ### 3. Restart Win",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "# macOS/Linux\nnano ~/.codeium/windsurf/mcp_config.json\n\n# Windows\nnotepad %USERPROFILE%\\.codeium\\win",
+        "duration_hint": 25.1
+      },
+      {
+        "step_number": 7,
+        "title": "VSCode Setup",
+        "narration": "VSCode with the Cline extension uses `.vscode/mcp.json` in your workspace. ### 1. Create the Config File In your project root (or globally in your user settings): ### 2. Add the MCP Server Note: VSCod",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "mkdir -p .vscode\nnano .vscode/mcp.json",
+        "duration_hint": 32.7
+      },
+      {
+        "step_number": 8,
+        "title": "Highlight AI Setup",
+        "narration": "Highlight AI uses a GUI-based plugin system. ### 1. Open Plugin Settings 1. Launch Highlight AI 2. Click the plugins icon (@ symbol) in the sidebar 3. Click Installed Plugins at the top 4. Select Cust",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "What's the difference between PostHog's identify and alias calls?",
+        "duration_hint": 34.1
+      },
+      {
+        "step_number": 9,
+        "title": "Augment Code Setup",
+        "narration": "Augment Code supports MCP via NPX commands. ### 1. Open Augment Settings Navigate to Settings \u2192 MCP Servers. ### 2. Add the MCP Server - Name: `posthog Docs` - Command: `npx mcp-remote https://gitmcp.",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "{\n  \"mcpServers\": {\n    \"posthog Docs\": {\n      \"command\": \"npx\",\n      \"args\": [\n...",
+        "duration_hint": 24.1
+      },
+      {
+        "step_number": 10,
+        "title": "Msty AI Setup",
+        "narration": "Msty AI uses a JSON import workflow. ### 1. Copy the Configuration ### 2. Import via GUI 1. Go to Msty Studio \u2192 Tools 2. Select Import Tools from JSON Clipboard 3. Paste the configuration above ### 3.",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "{\n  \"mcpServers\": {\n    \"posthog Docs\": {\n      \"command\": \"npx\",\n      \"args\": [\n...",
+        "duration_hint": 17.9
+      },
+      {
+        "step_number": 11,
+        "title": "What You Can Do Now",
+        "narration": "With the MCP server connected, your AI assistant has superpowers: ### 1. Search the Codebase The AI will search the repository and return actual file paths and code snippets. ### 2. Understand Archite",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "Find all files that implement feature flag evaluation",
+        "duration_hint": 38.6
+      },
+      {
+        "step_number": 12,
+        "title": "Troubleshooting",
+        "narration": "### \"MCP server not responding\" Solution: Ensure you restarted your AI assistant completely (not just reloaded the window). The MCP connection initializes on startup. ### \"Permission denied\" when edit",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "node --version\nnpx --version",
+        "duration_hint": 40.3
+      },
+      {
+        "step_number": 13,
+        "title": "Knowledge Base References",
+        "narration": "This tutorial was created using: - Official GitMCP documentation at https://gitmcp.io/PostHog/posthog - GitHub repository at https://github.com/idosal/git-mcp - Configuration examples for Claude Deskt",
+        "url": "https://posthog.com",
+        "actions_count": 0,
+        "overlay_text": "",
+        "duration_hint": 26.4
+      }
+    ],
+    "total_steps": 13,
+    "status": "script_only"
   },
   "okr_progress": {
     "week": "2026-W10",
     "content_produced": true,
     "issues_triaged": 39,
     "social_mentions_found": 60,
-    "themes_identified": 10,
+    "themes_identified": 8,
     "experiments_designed": 3,
+    "video_produced": true,
     "status": "complete"
   }
 }
