@@ -205,11 +205,11 @@ These are outputs produced by the agent system:
 
 | Agent | Output | File |
 |-------|--------|------|
-| Sage | Weekly Community Triage Report | [`deliverables/samples/community-triage.md`](deliverables/samples/community-triage.md) |
-| Iris | Developer Feedback Synthesis | [`deliverables/samples/feedback-synthesis.md`](deliverables/samples/feedback-synthesis.md) |
-| Nova | Experiment Pre-Registration | [`deliverables/samples/growth-experiment.md`](deliverables/samples/growth-experiment.md) |
-| Kai | Technical Tutorial | [`deliverables/samples/tutorial.md`](deliverables/samples/tutorial.md) |
-| Atlas | System Architecture Overview | [`deliverables/samples/portfolio-summary.md`](deliverables/samples/portfolio-summary.md) |
+| Sage | Weekly Community Triage Report | [`deliverables/community-triage.md`](deliverables/community-triage.md) |
+| Iris | Developer Feedback Synthesis | [`deliverables/feedback-synthesis.md`](deliverables/feedback-synthesis.md) |
+| Nova | Experiment Pre-Registration | [`deliverables/growth-experiment.md`](deliverables/growth-experiment.md) |
+| Kai | Technical Tutorial | [`deliverables/tutorial.md`](deliverables/tutorial.md) |
+| Atlas | System Architecture Overview | [`deliverables/portfolio-summary.md`](deliverables/portfolio-summary.md) |
 
 ---
 
